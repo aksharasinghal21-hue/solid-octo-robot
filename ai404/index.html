@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI:404</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <!-- HUD -->
+    <div id="crosshair" style="display:none"></div>
+    <div id="interact-prompt"></div>
+    <div id="objective"></div>
+    <div id="messages"></div>
+    <div id="scanlines"></div>
+
+    <!-- Start screen -->
+    <div id="start-screen" class="overlay">
+      <div class="panel">
+        <h1 class="glitch">AI:404</h1>
+        <p class="subtitle">SYSTEM ERROR. HUMAN INSTANCE NOT FOUND.</p>
+        <p class="hint">WASD — move &nbsp;|&nbsp; MOUSE — look &nbsp;|&nbsp; E — interact &nbsp;|&nbsp; ESC — pause</p>
+        <button id="btn-start" class="btn-neon">INITIALIZE</button>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div id="pause-screen" class="overlay hidden">
+      <div class="panel">
+        <h2>// PAUSED</h2>
+        <button id="btn-resume" class="btn-neon">RESUME</button>
+        <button id="btn-restart" class="btn-dim">RESTART SIMULATION</button>
+      </div>
+    </div>
+
+    <!-- Resume hint (after closing terminals) -->
+    <div id="resume-screen" class="overlay hidden">
+      <div class="panel">
+        <h2>SIGNAL SUSPENDED</h2>
+        <p class="hint">click to resume</p>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <div id="terminal-screen" class="overlay hidden">
+      <div class="terminal-window">
+        <div class="term-header"><span id="term-title">TERMINAL</span><button id="term-close">[ CLOSE ]</button></div>
+        <pre id="term-body"></pre>
+        <div id="term-keypad" class="hidden">
+          <input id="keypad-input" readonly placeholder="_ _ _" />
+          <div class="keys">
+            <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+            <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+            <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+            <button data-k="C">CLR</button><button data-k="0">0</button><button data-k="E">ENTER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ending -->
+    <div id="ending-screen" class="overlay hidden">
+      <div class="panel ending-panel">
+        <h2 id="ending-title"></h2>
+        <pre id="ending-body"></pre>
+        <p id="ending-tag" class="hint"></p>
+        <button id="btn-again" class="btn-neon">RUN SIMULATION AGAIN</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

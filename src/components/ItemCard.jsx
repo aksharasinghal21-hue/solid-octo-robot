@@ -1,21 +1,4 @@
-import { useState } from "react";
-import { api } from "../api.js";
-
-const TYPES = {
-  note: { label: "Note", icon: "📝" },
-  text: { label: "Text", icon: "📋" },
-  pdf: { label: "PDF", icon: "📄" },
-  image: { label: "Image", icon: "🖼️" },
-  youtube: { label: "YouTube", icon: "▶️" },
-  website: { label: "Website", icon: "🔗" },
-  other: { label: "Other", icon: "📎" },
-};
-
-export function typeInfo(type) {
-  return TYPES[type] || TYPES.other;
-}
-
-export default function ItemCard({ item, onOpen, onDelete }) {
+export default function ItemCard({ item, onOpen, onDelete, selected, onToggleSelect }) {
   const info = typeInfo(item.type);
   const preview =
     item.type === "note" || item.type === "text"
@@ -23,12 +6,34 @@ export default function ItemCard({ item, onOpen, onDelete }) {
       : item.url || (item.file ? `File: ${item.file}` : "");
 
   return (
-    <div className="item-card card">
+    <div className={`item-card card ${selected ? "selected" : ""}`}>
       <div className="item-head">
+        <label className="select-box" onClick={(e) => e.stopPropagation()}>
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggleSelect(item.id)}
+          />
+          <span>Select</span>
+        </label>
+        <span className="date">{new Date(item.created_at + "Z").toLocaleDateString()}</span>
+      </div>
+      <div className="item-type-row">
         <span className={`badge badge-${item.type}`}>
           {info.icon} {info.label}
         </span>
-        <span className="date">{new Date(item.created_at + "Z").toLocaleDateString()}</span>
+        {item.url && (
+          <a
+            className="open-link"
+            href={item.url}
+            target="_blank"
+            rel="noreferrer"
+            title={info.label === "YouTube" ? "Open on YouTube" : "Open Website"}
+            onClick={(e) => e.stopPropagation()}
+          >
+            ↗
+          </a>
+        )}
       </div>
       <h4 onClick={onOpen} role="button">
         {item.title}
@@ -46,3 +51,17 @@ export default function ItemCard({ item, onOpen, onDelete }) {
     </div>
   );
 }
+
+export function typeInfo(type) {
+  return TYPES[type] || TYPES.other;
+}
+
+const TYPES = {
+  note: { label: "Note", icon: "📝" },
+  text: { label: "Text", icon: "📋" },
+  pdf: { label: "PDF", icon: "📄" },
+  image: { label: "Image", icon: "🖼️" },
+  youtube: { label: "YouTube", icon: "▶️" },
+  website: { label: "Website", icon: "🔗" },
+  other: { label: "Other", icon: "📎" },
+};

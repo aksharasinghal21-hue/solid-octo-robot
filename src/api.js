@@ -36,4 +36,11 @@ export const api = {
     fetch(`/api/topics/${topicId}/items`, { method: "POST", body: formData }).then(handle),
 
   deleteItem: (id) => fetch(`/api/items/${id}`, { method: "DELETE" }).then(handle),
+
+  summarize: (itemIds) =>
+    fetch("/api/summarize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemIds }),
+    }).then(handle),
 };

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Healup</title>
+    <link rel="icon" href="https://media.licdn.com/dms/image/v2/D5603AQHMs_4M5mWwbw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1675903191718?e=2147483647&v=beta&t=kvnUG3krNhC20y-i-9Pdkc79A5U5ciE_oOLis1QldRg">
+
+    <link rel="stylesheet"href="style.css">
+    
+</head>
+
+<body>
+
+    <main class="app-shell">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="top-header">
+
+            <div class="brand">
+
+                
+                    <img src="https://media.licdn.com/dms/image/v2/D5603AQHMs_4M5mWwbw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1675903191718?e=2147483647&v=beta&t=kvnUG3krNhC20y-i-9Pdkc79A5U5ciE_oOLis1QldRg" alt="Healup Logo" class="brand-img">
+
+                    <div class="brand-text-group">
+        <h1 class="brand-title">Healup</h1>
+        <span class="brand-tagline">Class & Meeting Recovery Planner</span>
+                
+
+            </div>
+
+            <div class="header-tag">
+                LIVE A PERFECT DAY! 😎
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             CURRENT STATUS
+        ================================================== -->
+
+        <section
+            class="status-banner"
+            id="statusBanner"
+        >
+
+            <div class="status-left">
+
+                <div class="status-dot"></div>
+
+                <div>
+
+                    <span class="status-label">
+                        CURRENT STATUS
+                    </span>
+
+                    <h2 id="statusTitle">
+                        No schedule loaded
+                    </h2>
+
+                    <p id="statusDescription">
+                        Add a class or meeting to begin.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="status-countdown"
+                id="statusCountdown"
+            >
+                --:--
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ADD SCHEDULE
+        ================================================== -->
+
+        <section class="control-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        YOUR DAY
+                    </span>
+
+                    <h2>
+                        Add a schedule block
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    id="sampleBtn"
+                >
+                    Load Sample Schedule
+                </button>
+
+            </div>
+
+
+            <form
+                id="scheduleForm"
+                class="schedule-form"
+            >
+
+                <div class="form-group title-group">
+
+                    <label for="title">
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="e.g. Mathematics Class"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="startTime">
+                        Start Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="startTime"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="endTime">
+                        End Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="endTime"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    + Add Block
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             SOUND SELECTOR
+        ================================================== -->
+
+        <section class="sound-card">
+
+            <div class="section-heading sound-heading">
+
+                <div>
+
+                    <span class="eyebrow">
+                        BUFFER SOUND
+                    </span>
+
+                    <h2>
+                        Choose your recovery sound
+                    </h2>
+
+                    <p>
+                        Healup plays your selected sound
+                        when a buffer begins.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="sound-options">
+
+                <!-- BIRD -->
+
+                <label class="sound-option selected">
+
+                    <input
+                        type="radio"
+                        name="bufferSound"
+                        value="bird"
+                        checked
+                    >
+
+                    <div class="sound-icon">
+                        🐦
+                    </div>
+
+                    <div class="sound-details">
+
+                        <strong>
+                            Bird Chirping
+                        </strong>
+
+                        <span>
+                            Natural & peaceful
+                        </span>
+
+                    </div>
+
+                    <div class="sound-check">
+                        ✓
+                    </div>
+
+                </label>
+
+
+                <!-- KITTEN -->
+
+                <label class="sound-option">
+
+                    <input
+                        type="radio"
+                        name="bufferSound"
+                        value="kitten"
+                    >
+
+                    <div class="sound-icon">
+                        🐱
+                    </div>
+
+                    <div class="sound-details">
+
+                        <strong>
+                            Kitten Meow
+                        </strong>
+
+                        <span>
+                            Soft & playful
+                        </span>
+
+                    </div>
+
+                    <div class="sound-check">
+                        ✓
+                    </div>
+
+                </label>
+
+
+                <!-- WATER -->
+
+                <label class="sound-option">
+
+                    <input
+                        type="radio"
+                        name="bufferSound"
+                        value="water"
+                    >
+
+                    <div class="sound-icon">
+                        💧
+                    </div>
+
+                    <div class="sound-details">
+
+                        <strong>
+                            Water Drop
+                        </strong>
+
+                        <span>
+                            Calm & refreshing
+                        </span>
+
+                    </div>
+
+                    <div class="sound-check">
+                        ✓
+                    </div>
+
+                </label>
+
+
+                <!-- RAIN -->
+
+                <label class="sound-option">
+
+                    <input
+                        type="radio"
+                        name="bufferSound"
+                        value="rain"
+                    >
+
+                    <div class="sound-icon">
+                        🌧️
+                    </div>
+
+                    <div class="sound-details">
+
+                        <strong>
+                            Gentle Rain
+                        </strong>
+
+                        <span>
+                            Quiet & relaxing
+                        </span>
+
+                    </div>
+
+                    <div class="sound-check">
+                        ✓
+                    </div>
+
+                </label>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="test-sound-button"
+                id="testSoundBtn"
+            >
+                ▶ Test Selected Sound
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             TIMELINE
+        ================================================== -->
+
+        <section class="timeline-section">
+
+            <div class="timeline-header">
+
+                <div>
+
+                    <span class="eyebrow">
+                        TIMELINE
+                    </span>
+
+                    <h2>
+                        Your day
+                    </h2>
+
+                </div>
+
+                <span
+                    class="event-count"
+                    id="eventCount"
+                >
+                    0 blocks
+                </span>
+
+            </div>
+
+
+            <div
+                class="timeline"
+                id="timeline"
+            >
+
+                <div class="empty-state">
+
+                    <div class="empty-symbol">
+                        +
+                    </div>
+
+                    <h3>
+                        Your day is open.
+                    </h3>
+
+                    <p>
+                        Add your first class or meeting,
+                        or load the sample schedule.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="app-footer">
+
+            <div>
+                Healup automatically protects your recovery time.
+            </div>
+
+            <button
+                type="button"
+                class="clear-button"
+                id="clearBtn"
+            >
+                Clear Schedule
+            </button>
+
+        </footer>
+
+    </main>
+
+
+    <!-- =====================================================
+         REAL AUDIO ELEMENT
+    ====================================================== -->
+
+    <audio
+        id="bufferAudio"
+        preload="auto"
+    ></audio>
+
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>

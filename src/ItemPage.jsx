@@ -33,6 +33,13 @@ export default function ItemPage({ itemId, onBack, onDeleted }) {
   const info = typeInfo(item.type);
   const isImage = item.type === "image";
   const isPdf = item.type === "pdf";
+  const youtubeId =
+    item.type === "youtube" ? item.url?.match(/(?:v=|youtu\.be\/|shorts\/)([\w-]{11})/)?.[1] : null;
+  const openLabel = {
+    youtube: "Open on YouTube ↗",
+    website: "Open Website ↗",
+    other: "Open Link ↗",
+  }[item.type];
 
   return (
     <div className="container narrow">
@@ -53,6 +60,22 @@ export default function ItemPage({ itemId, onBack, onDeleted }) {
               {item.url}
             </a>
           </p>
+        )}
+
+        {openLabel && (
+          <p>
+            <a className="btn primary small" href={item.url} target="_blank" rel="noreferrer">
+              {openLabel}
+            </a>
+          </p>
+        )}
+
+        {youtubeId && (
+          <img
+            className="file-preview"
+            src={`https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`}
+            alt={`Thumbnail: ${item.title}`}
+          />
         )}
 
         {(item.type === "note" || item.type === "text") && (

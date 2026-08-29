@@ -5,6 +5,10 @@ import fs from "fs";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
 import { db, seed } from "./db.js";
+import { extractVideoId, fetchTranscript } from "./services/youtube.js";
+import { fetchReadableText } from "./services/webpage.js";
+import { extractPdfText } from "./services/pdf.js";
+import { isConfigured, summarizeSources } from "./services/summarizer.js";
 
 seed();
 
@@ -148,6 +152,121 @@ app.delete("/api/items/:id", (req, res) => {
   db.prepare("DELETE FROM items WHERE id = ?").run(req.params.id);
   touchTopic(row.topic_id);
   res.json({ ok: true });
+});
+
+// ---- Summarization ----
+
+async function resolveSourceContent(item) {
+  // Returns { status: "usable", content } or { status: "unavailable", reason }
+  const hasText = (t) => (t || "").trim().length > 0;
+
+  if (item.type === "text" || item.type === "note") {
+    return hasText(item.content)
+      ? { status: "usable", content: item.content.trim().slice(0, 20000) }
+      : { status: "unavailable", reason: `This ${item.type} contains no text content.` };
+  }
+
+  if (item.type === "youtube") {
+    const videoId = extractVideoId(item.url);
+    if (!videoId)
+      return { status: "unavailable", reason: "The stored URL is not a valid YouTube link." };
+    const t = await fetchTranscript(videoId);
+    return t.ok
+      ? { status: "usable", content: `Video transcript (${t.lang}, track: ${t.trackName}):\n${t.text.slice(0, 24000)}` }
+      : { status: "unavailable", reason: t.reason };
+  }
+
+  if (item.type === "website") {
+    if (!item.url)
+      return { status: "unavailable", reason: "No URL is stored for this website source." };
+    const w = await fetchReadableText(item.url);
+    return w.ok
+      ? { status: "usable", content: `Webpage content from ${w.finalUrl || item.url}:\n${w.text}` }
+      : { status: "unavailable", reason: w.reason };
+  }
+
+  if (item.type === "pdf") {
+    if (!item.file)
+      return { status: "unavailable", reason: "No PDF file is attached to this item." };
+    return await extractPdfText(item.file);
+  }
+
+  // image / other
+  if (hasText(item.content))
+    return { status: "usable", content: item.content.trim().slice(0, 20000) };
+  if (item.type === "image")
+    return {
+      status: "unavailable",
+      reason: "This image cannot currently be summarized because readable text (OCR) has not been extracted.",
+    };
+  return { status: "unavailable", reason: "This source does not contain readable text." };
+}
+
+app.post("/api/summarize", async (req, res) => {
+  const { itemIds } = req.body || {};
+  if (!Array.isArray(itemIds) || itemIds.length === 0)
+    return res.status(400).json({ error: "itemIds must be a non-empty array." });
+  if (itemIds.length > 10)
+    return res.status(400).json({ error: "Please select at most 10 sources per summary." });
+  const ids = [...new Set(itemIds.map(Number).filter((n) => Number.isInteger(n)))];
+  if (ids.length !== itemIds.length)
+    return res.status(400).json({ error: "Invalid item ids supplied." });
+
+  const placeholders = ids.map(() => "?").join(",");
+  const rows = db.prepare(`SELECT * FROM items WHERE id IN (${placeholders})`).all(...ids);
+  if (rows.length !== ids.length)
+    return res.status(404).json({ error: "One or more selected items no longer exist." });
+
+  const meta = (r) => ({ id: r.id, title: r.title, type: r.type, url: r.url || null });
+  const analyzed = [];
+  const failed = [];
+
+  for (const row of rows) {
+    let result;
+    try {
+      result = await resolveSourceContent(row);
+    } catch (e) {
+      result = { status: "unavailable", reason: `Content retrieval failed: ${e.message}` };
+    }
+    if (result.status === "usable") {
+      console.log(`[summarize] usable: ${row.type} "${row.title.slice(0, 40)}" (${result.content.length} chars)`);
+      analyzed.push({ ...meta(row), content: result.content });
+    } else {
+      console.log(`[summarize] FAILED: ${row.type} "${row.title.slice(0, 40)}" reason=${JSON.stringify(result.reason)}`);
+      failed.push({ ...meta(row), reason: result.reason || "Unknown error." });
+    }
+  }
+
+  if (analyzed.length === 0)
+    return res.status(422).json({
+      error: "The selected sources do not contain readable text that can currently be summarized.",
+      failed,
+      selectedCount: rows.length,
+      analyzedCount: 0,
+    });
+
+  const ai = await summarizeSources(analyzed);
+  if (!ai.ok) {
+    const status = ai.code === "not_configured" ? 503 : 502;
+    return res.status(status).json({
+      error: ai.error,
+      code: ai.code,
+      failed,
+      analyzedCount: analyzed.length,
+      selectedCount: rows.length,
+    });
+  }
+
+  res.json({
+    summary: ai.summary,
+    keyPoints: ai.keyPoints,
+    limitations: ai.limitations,
+    model: ai.model,
+    analyzedCount: analyzed.length,
+    selectedCount: rows.length,
+    analyzed: analyzed.map(({ content, ...m }) => m),
+    failed,
+  });
 });
 
 // Uploaded files
